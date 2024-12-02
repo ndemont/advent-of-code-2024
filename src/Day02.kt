@@ -90,7 +90,7 @@ fun main() {
         }
     }
     
-    fun isAProblemDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Int {
+    fun findProblemDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Int {
         return when {
             nextIsDampener(sign, pos, prev, current, next, nextPlus) -> pos + 1
             prevIsDampener(sign, pos, prev, current, next, nextPlus) -> pos - 1
@@ -121,7 +121,7 @@ fun main() {
                         val next = if (i > levels.size - 2) - 1 else levels[i + 1].toInt()
                         val nextPlus = if (i > levels.size - 3) - 1 else levels[i + 2].toInt()
 
-                        problemDampenerPosition = isAProblemDampener(sign, i, prev, current, next, nextPlus)
+                        problemDampenerPosition = findProblemDampener(sign, i, prev, current, next, nextPlus)
 
                         if (problemDampenerPosition != -1) {
                             if (problemDampenerPosition in (0..1)) {
