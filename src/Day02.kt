@@ -35,18 +35,16 @@ fun main() {
         return safeReports
     }
 
-    fun isUnsafe(sign: Int, current: Int, next: Int): Boolean {
-        val diff = current - next
-        val abs = abs(diff)
+    fun isUnsafe(sign: Int, left: Int, right: Int): Boolean {
+        val diff = left - right
 
-        return (abs < 1 || abs > 3) || (diff.sign != sign)
+        return abs(diff) !in 1..3 || diff.sign != sign
     }
 
     fun isSafe(sign: Int, left: Int, right: Int): Boolean {
         val diff = left - right
-        val abs = abs(diff)
 
-        return (abs in 1..3) && (diff.sign == sign)
+        return abs(diff) in 1..3 && diff.sign == sign
     }
     
     fun prevIsDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Boolean {
@@ -62,61 +60,43 @@ fun main() {
     }
 
     fun currentIsDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Boolean {
-        if (pos == 0) {
-            val newSign = (next - nextPlus).sign
-            val nextIsSafe = isSafe(newSign, next, nextPlus)
-
-            return nextIsSafe
+        return when {
+            pos < 1 -> {
+                val newSign = (next - nextPlus).sign
+                isSafe(newSign, next, nextPlus)
+            }
+            pos == 1 -> {
+                val newSign = (prev - next).sign
+                val prevIsSafe = isSafe(newSign, prev, next)
+                val nextIsSafe = nextPlus == -1 || isSafe(newSign, next, nextPlus)
+                prevIsSafe && nextIsSafe
+            }
+            else -> {
+                val prevIsSafe = isSafe(sign, prev, next)
+                val nextIsSafe = nextPlus == -1 || isSafe(sign, next, nextPlus)
+                prevIsSafe && nextIsSafe
+            }
         }
-
-        if (pos == 1) {
-            val newSign = (prev - next).sign
-            val prevIsSafe = isSafe(newSign, prev, next)
-            val nextIsSafe = if (nextPlus == -1) true else isSafe(newSign, next, nextPlus)
-
-            return prevIsSafe && nextIsSafe
-        }
-
-        if (pos > 1) {
-            val prevIsSafe = isSafe(sign, prev, next)
-            val nextIsSafe = if (nextPlus == -1) true else isSafe(sign, next, nextPlus)
-
-            return prevIsSafe && nextIsSafe
-        }
-
-        return false
     }
     
     fun nextIsDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Boolean {
-        if (nextPlus < 0) {
-            return true
+        return when {
+            nextPlus < 0 -> true
+            pos == 0 -> {
+                val newSign = (current - nextPlus).sign
+                isSafe(newSign, current, nextPlus)
+            }
+            else -> isSafe(sign, current, nextPlus)
         }
-
-        if (pos == 0) {
-            val newSign = (current - nextPlus).sign
-            val currentIsSafe = isSafe(newSign, current, nextPlus)
-
-            return currentIsSafe
-        }
-
-        return isSafe(sign, current, nextPlus)
     }
     
     fun isAProblemDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Int {
-
-        if (nextIsDampener(sign, pos, prev, current, next, nextPlus)) {
-            return pos + 1
+        return when {
+            nextIsDampener(sign, pos, prev, current, next, nextPlus) -> pos + 1
+            prevIsDampener(sign, pos, prev, current, next, nextPlus) -> pos - 1
+            currentIsDampener(sign, pos, prev, current, next, nextPlus) -> pos
+            else -> -1
         }
-
-        if (prevIsDampener(sign, pos, prev, current, next, nextPlus)) {
-            return pos - 1
-        }
-
-        if (currentIsDampener(sign, pos, prev, current, next, nextPlus)) {
-            return pos
-        }
-
-        return - 1
     }
 
     fun part2(input: List<String>): Int {
@@ -144,11 +124,8 @@ fun main() {
                         problemDampenerPosition = isAProblemDampener(sign, i, prev, current, next, nextPlus)
 
                         if (problemDampenerPosition != -1) {
-                            if (problemDampenerPosition == 0) {
-                                sign = (levels[1].toInt() - levels[2].toInt()).sign
-                            }
-                            if (problemDampenerPosition == 1) {
-                                sign = (levels[0].toInt() - levels[2].toInt()).sign
+                            if (problemDampenerPosition in (0..1)) {
+                                sign = (levels[1 - problemDampenerPosition].toInt() - levels[2].toInt()).sign
                             }
                             continue
                         }
@@ -167,18 +144,18 @@ fun main() {
         return safeReports
     }
 
-    // Or read a large test input from the `src/Day01_test.txt` file:
+    // Run with test input
     val testInput = readInput("Day02_test")
-//    println("Test output: part1")
-//    part1(testInput).println()
+    println("Test output: part1")
+    part1(testInput).println()
     println("Test output: part2")
     part2(testInput).println()
     println()
 
-//     Read the input from the `src/Day01.txt` file.
+    // Run with real input
     val input = readInput("Day02")
-//    println("Real output: part1")
-//    part1(input).println()
+    println("Real output: part1")
+    part1(input).println()
     println("Real output: part2")
     part2(input).println()
 }
