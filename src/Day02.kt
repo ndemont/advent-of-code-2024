@@ -118,7 +118,7 @@ fun main() {
                     if (problemDampenerPosition == -1) {
                         val prev = if (i == 0) - 1 else levels[i - 1].toInt()
                         val current = levels[i].toInt()
-                        val next = if (i > levels.size - 2) - 1 else levels[i + 1].toInt()
+                        val next = levels[i + 1].toInt()
                         val nextPlus = if (i > levels.size - 3) - 1 else levels[i + 2].toInt()
 
                         problemDampenerPosition = findProblemDampener(sign, i, prev, current, next, nextPlus)
