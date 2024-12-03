@@ -1,5 +1,3 @@
-import java.io.File
-
 fun main() {
     val mulRegex = Regex("""mul\((\d+),(\d+)\)""")
     val dontRegex = Regex("""don't\(\)""")
@@ -8,54 +6,36 @@ fun main() {
 
     fun multiply(regex: String): Int {
         val (x, y) = mulRegex.matchEntire(regex)!!.destructured
-
         return x.toInt() * y.toInt()
     }
 
     fun part1(input: List<String>): Int {
-        var sum = 0
-
-        for (line in input) {
-            val matches = mulRegex.findAll(line)
-
-            for (match in matches) { sum += multiply(match.value) }
-        }
-
-        return sum
+        return input
+            .flatMap { line -> mulRegex.findAll(line) }
+            .sumOf { match -> multiply(match.value) }
     }
 
     fun part2(input: List<String>): Int {
-        var sum = 0
-        var isValid = true
+        var isEnabled = true
 
-        for (line in input) {
-            val matches = allRegex.findAll(line)
-
-            for (match in matches) {
+        return input.flatMap { line ->
+            allRegex.findAll(line).map { match ->
                 val regex = match.value
-
                 when {
-                    dontRegex.matches(regex) -> { isValid = false }
-                    doRegex.matches(regex) -> { isValid = true }
-                    mulRegex.matches(regex) && isValid -> { sum += multiply(regex) }
+                    dontRegex.matches(regex) -> { isEnabled = false; 0 }
+                    doRegex.matches(regex) -> { isEnabled = true; 0 }
+                    mulRegex.matches(regex) && isEnabled -> multiply(regex)
+                    else -> 0
                 }
             }
-        }
-
-        return sum
+        }.sum()
     }
 
-    // Run with test input
     val testInput = readInput("Day03_test")
-    println("Test output: part1")
-    part1(testInput).println()
-    println("Test output: part2")
-    part2(testInput).println()
+    println("Test output (part1): ${part1(testInput)}")
+    println("Test output (part2): ${part2(testInput)}")
 
-    // Run with real input
-    val input = readInput("Day03")
-    println("Real output: part1")
-    part1(input).println()
-    println("Real output: part2")
-    part2(input).println()
+    val realInput = readInput("Day03")
+    println("Real output (part1): ${part1(realInput)}")
+    println("Real output (part2): ${part2(realInput)}")
 }
