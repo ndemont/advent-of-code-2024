@@ -1,5 +1,3 @@
-import javax.swing.text.Position
-
 fun main() {
     val startTime = System.currentTimeMillis()
     val guardDirections = mapOf(
@@ -12,7 +10,7 @@ fun main() {
     fun getDirection(char: Char): Pair<Int, Int> { return guardDirections[char] ?: Pair(0, 0) }
 
     fun getCharFromDirection(direction: Pair<Int, Int>): Char {
-        return guardDirections.entries.firstOrNull { it.value == direction }?.key ?: ' ' // Return a default char if not found
+        return guardDirections.entries.firstOrNull { it.value == direction }?.key ?: ' '
     }
 
     fun getGuardPosition(map: List<String>): Pair<Int, Int> {
@@ -48,6 +46,8 @@ fun main() {
     }
 
     fun markAsVisited2(list: MutableList<String>, stringIndex: Int, charIndex: Int, direction: Pair<Int, Int>, isTurn: Boolean): Boolean {
+        list.forEach { it -> println(it) }
+        println()
         val currentChar = list[stringIndex][charIndex]
         if (getDirection(currentChar) == direction) { return true }
         if ((currentChar in guardDirections) && isTurn) { return false}
@@ -162,7 +162,6 @@ fun main() {
         return validObstructions
     }
 
-
     val testInput = readInput("Day06_test")
     println("Test output (part1): ${part1(testInput)}")
     println("Test output (part2): ${part2(testInput)}")
@@ -171,6 +170,6 @@ fun main() {
     println("Real output (part1): ${part1(realInput)}")
     println("Real output (part2): ${part2(realInput)}")
 
-    val endTime = System.currentTimeMillis() // Record end time
+    val endTime = System.currentTimeMillis()
     println("Execution time: ${endTime - startTime} ms")
 }
