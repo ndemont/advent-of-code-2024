@@ -13,18 +13,18 @@ fun main() {
 
     fun testCalibration(expectedResult: Long, currentValuePosition: Int, currentResult: Long, testValues: List<Int>): Boolean {
         val value = testValues[currentValuePosition]
-        val newMultResult = currentResult * testValues[currentValuePosition]
-        val newPlusResult = currentResult + value
-        val newConcatResult = (currentResult * getNextPowerOfTen(value)) + value
+        val multResult = currentResult * testValues[currentValuePosition]
+        val plusResult = currentResult + value
+        val concatResult = (currentResult * getNextPowerOfTen(value)) + value
 
         if (currentValuePosition == testValues.size - 1) {
-            return newMultResult == expectedResult || newPlusResult == expectedResult || newConcatResult == expectedResult
+            return multResult == expectedResult || plusResult == expectedResult || concatResult == expectedResult
         }
 
         val nextPosition = currentValuePosition + 1
-        return testCalibration(expectedResult, nextPosition, newMultResult, testValues)
-                || testCalibration(expectedResult, nextPosition, newPlusResult, testValues)
-                || testCalibration(expectedResult, nextPosition, newConcatResult, testValues)
+        return testCalibration(expectedResult, nextPosition, multResult, testValues)
+                || testCalibration(expectedResult, nextPosition, plusResult, testValues)
+                || testCalibration(expectedResult, nextPosition, concatResult, testValues)
     }
 
     fun part2(input: List<String>): Long {
