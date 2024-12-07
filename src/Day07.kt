@@ -13,24 +13,25 @@ fun main() {
 
     fun testCalibration(target: Long, index: Int, current: Long, numbers: List<Int>): Boolean {
         val newIndex = index + 1
-        if (newIndex == numbers.size) { return (target == current) }
+        if (newIndex == numbers.size) return target == current
 
-        return testCalibration(target, newIndex, (current * numbers[newIndex]), numbers)
-                || testCalibration(target, newIndex, (current + numbers[newIndex]), numbers)
-                || testCalibration(target, newIndex, (current * getPowerOfTen(numbers[newIndex])) + numbers[newIndex], numbers)
+        val number = numbers[newIndex]
+        return testCalibration(target, newIndex, (current * number), numbers)
+                || testCalibration(target, newIndex, (current + number), numbers)
+                || testCalibration(target, newIndex, (current * getPowerOfTen(number)) + number, numbers)
     }
 
     fun part2(input: List<String>): Long {
         return input.sumOf { equation ->
             val (resultPart, testValuesPart) = equation.split(":").map { it.trim() }
             val result = resultPart.toLong()
-            val testValues = testValuesPart.split(" ").map { it.toInt() }
+            val numbers = testValuesPart.split(" ").map { it.toInt() }
 
-            if (testCalibration(result, 0, testValues[0].toLong(), testValues)) result else 0
+            if (testCalibration(result, 0, numbers[0].toLong(), numbers)) result else 0
         }
     }
 
-    val testInput = readInput("Day07_test")
+//    val testInput = readInput("Day07_test")
 //    println("Test output (part1): ${part1(testInput)}")
 //    println("Test output (part2): ${part2(testInput)}")
 
