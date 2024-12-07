@@ -11,20 +11,13 @@ fun main() {
         return 10.0.pow(getDigitCount(number)).toInt()
     }
 
-    fun testCalibration(expectedResult: Long, currentValuePosition: Int, currentResult: Long, testValues: List<Int>): Boolean {
-        val value = testValues[currentValuePosition]
-        val multResult = currentResult * testValues[currentValuePosition]
-        val plusResult = currentResult + value
-        val concatResult = (currentResult * getNextPowerOfTen(value)) + value
+    fun testCalibration(target: Long, index: Int, current: Long, numbers: List<Int>): Boolean {
+        val newIndex = index + 1
+        if (newIndex == numbers.size) { return (target == current) }
 
-        if (currentValuePosition == testValues.size - 1) {
-            return multResult == expectedResult || plusResult == expectedResult || concatResult == expectedResult
-        }
-
-        val nextPosition = currentValuePosition + 1
-        return testCalibration(expectedResult, nextPosition, multResult, testValues)
-                || testCalibration(expectedResult, nextPosition, plusResult, testValues)
-                || testCalibration(expectedResult, nextPosition, concatResult, testValues)
+        return testCalibration(target, newIndex, (current * numbers[newIndex]), numbers)
+                || testCalibration(target, newIndex, (current + numbers[newIndex]), numbers)
+                || testCalibration(target, newIndex, (current * getNextPowerOfTen(numbers[newIndex])) + numbers[newIndex], numbers)
     }
 
     fun part2(input: List<String>): Long {
@@ -33,14 +26,14 @@ fun main() {
             val result = resultPart.toLong()
             val testValues = testValuesPart.split(" ").map { it.toInt() }
 
-            if (testCalibration(result, 0, 0, testValues)) result else 0
+            if (testCalibration(result, 0, testValues[0].toLong(), testValues)) result else 0
         }
     }
 
 
     val testInput = readInput("Day07_test")
 //    println("Test output (part1): ${part1(testInput)}")
-    println("Test output (part2): ${part2(testInput)}")
+//    println("Test output (part2): ${part2(testInput)}")
 
     val realInput = readInput("Day07")
 //    println("Real output (part1): ${part1(realInput)}")
