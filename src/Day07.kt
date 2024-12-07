@@ -7,7 +7,7 @@ fun main() {
         return if (number < 10) 1 else 1 + getDigitCount(number / 10)
     }
 
-    fun getNextPowerOfTen(number: Int): Int {
+    fun getPowerOfTen(number: Int): Int {
         return 10.0.pow(getDigitCount(number)).toInt()
     }
 
@@ -17,7 +17,7 @@ fun main() {
 
         return testCalibration(target, newIndex, (current * numbers[newIndex]), numbers)
                 || testCalibration(target, newIndex, (current + numbers[newIndex]), numbers)
-                || testCalibration(target, newIndex, (current * getNextPowerOfTen(numbers[newIndex])) + numbers[newIndex], numbers)
+                || testCalibration(target, newIndex, (current * getPowerOfTen(numbers[newIndex])) + numbers[newIndex], numbers)
     }
 
     fun part2(input: List<String>): Long {
@@ -29,7 +29,6 @@ fun main() {
             if (testCalibration(result, 0, testValues[0].toLong(), testValues)) result else 0
         }
     }
-
 
     val testInput = readInput("Day07_test")
 //    println("Test output (part1): ${part1(testInput)}")
