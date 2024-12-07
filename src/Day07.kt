@@ -3,52 +3,40 @@ import kotlin.math.pow
 fun main() {
     val startTime = System.currentTimeMillis()
 
-    fun getNextPowerOfTen(number: Int): Int {
-        val length = number.toString().length
-        return 10.0.pow(length).toInt()
+    fun getDigitCount(number: Int): Int {
+        return if (number < 10) 1 else 1 + getDigitCount(number / 10)
     }
 
-    fun testCalbration(expectedResult: Long, currentValuePosition: Int, currentResult: Long, testValues: List<Int> ): Long {
+    fun getNextPowerOfTen(number: Int): Int {
+        return 10.0.pow(getDigitCount(number)).toInt()
+    }
+
+    fun testCalibration(expectedResult: Long, currentValuePosition: Int, currentResult: Long, testValues: List<Int>): Boolean {
+        val value = testValues[currentValuePosition]
         val newMultResult = currentResult * testValues[currentValuePosition]
-        val newPlusResult = currentResult + testValues[currentValuePosition]
-        val newConcatResult = (currentResult * getNextPowerOfTen(testValues[currentValuePosition])) + testValues[currentValuePosition]
+        val newPlusResult = currentResult + value
+        val newConcatResult = (currentResult * getNextPowerOfTen(value)) + value
 
         if (currentValuePosition == testValues.size - 1) {
-            if (newMultResult == expectedResult) { return newMultResult }
-            if (newPlusResult == expectedResult) { return newPlusResult }
-            return newConcatResult
+            return newMultResult == expectedResult || newPlusResult == expectedResult || newConcatResult == expectedResult
         }
 
-        var newResult = testCalbration(expectedResult, currentValuePosition + 1, newMultResult, testValues)
-        if (newResult == expectedResult) { return newResult }
-
-        newResult = testCalbration(expectedResult, currentValuePosition + 1, newPlusResult, testValues)
-        if (newResult == expectedResult) { return  newResult }
-
-        newResult = testCalbration(expectedResult, currentValuePosition + 1, newConcatResult, testValues)
-        if (newResult == expectedResult) { return  newResult }
-
-        return 0
+        val nextPosition = currentValuePosition + 1
+        return testCalibration(expectedResult, nextPosition, newMultResult, testValues)
+                || testCalibration(expectedResult, nextPosition, newPlusResult, testValues)
+                || testCalibration(expectedResult, nextPosition, newConcatResult, testValues)
     }
 
     fun part2(input: List<String>): Long {
-        var calibrations: Long = 0
+        return input.sumOf { equation ->
+            val (resultPart, testValuesPart) = equation.split(":").map { it.trim() }
+            val result = resultPart.toLong()
+            val testValues = testValuesPart.split(" ").map { it.toInt() }
 
-        input.forEach { equation ->
-            val parts = equation.split(":")
-            val result = parts[0].trim().toLong()
-            val testValues = parts[1].trim().split(" ").map { it.toInt() }
-
-            val calibration = testCalbration(result, 1, testValues[0].toLong(), testValues)
-
-            if (calibration == result) { calibrations += calibration }
+            if (testCalibration(result, 0, 0, testValues)) result else 0
         }
-
-        return calibrations
     }
 
-//    fun part2(input: List<String>): Int {
-//    }
 
     val testInput = readInput("Day07_test")
 //    println("Test output (part1): ${part1(testInput)}")
