@@ -46,8 +46,6 @@ fun main() {
     }
 
     fun markAsVisited2(list: MutableList<String>, stringIndex: Int, charIndex: Int, direction: Pair<Int, Int>, isTurn: Boolean): Boolean {
-        list.forEach { it -> println(it) }
-        println()
         val currentChar = list[stringIndex][charIndex]
         if (getDirection(currentChar) == direction) { return true }
         if ((currentChar in guardDirections) && isTurn) { return false}
