@@ -12,9 +12,7 @@ fun main() {
         var dotIndex = 0
         diskMap.reversed().forEachIndexed { reverseIndex, file ->
             if (file != ".") {
-                while (dotIndex < diskMap.size && diskMap[dotIndex] != ".") {
-                    dotIndex++
-                }
+                while (dotIndex < diskMap.size && diskMap[dotIndex] != ".") { dotIndex++ }
 
                 if (dotIndex < diskMap.size - 1 - reverseIndex) {
                     diskMap[dotIndex] = file
@@ -34,20 +32,23 @@ fun main() {
 
         input.first().forEachIndexed { index, blocks ->
             val newFile = if (index % 2 == 0) (index / 2).toString() else "."
-            val newFileList = List(blocks.toString().toInt()) { newFile }
-            if (newFileList.isNotEmpty()) { diskMap.add(newFileList.toMutableList()) }
+            val newFileList = MutableList(blocks.toString().toInt()) { newFile }
+            if (newFileList.isNotEmpty()) {
+                diskMap.add(newFileList)
+            }
         }
 
-        diskMap.reversed().forEachIndexed { reverseIndex, files ->
+        for (reverseIndex in diskMap.size - 1 downTo 0) {
+            val files = diskMap[reverseIndex]
             if (files.first() != ".") {
-                val availableSpotIndex = diskMap.indexOfFirst { block -> block.count { it == "." } >= files.size }
+                val availableSpotIndex = diskMap.indexOfFirst { block -> block.contains(".") && block.count { it == "." } >= files.size }
 
-                if (availableSpotIndex != -1 && availableSpotIndex < diskMap.size - reverseIndex) {
+                if (availableSpotIndex != -1 && availableSpotIndex < reverseIndex) {
                     val startEmptyIndex = diskMap[availableSpotIndex].indexOfFirst { it == "." }
 
                     files.forEachIndexed { i, file ->
                         diskMap[availableSpotIndex][startEmptyIndex + i] = file
-                        diskMap[diskMap.size - 1 - reverseIndex][i] = "."
+                        diskMap[reverseIndex][i] = "."
                     }
                 }
             }
