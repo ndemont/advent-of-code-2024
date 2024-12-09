@@ -1,36 +1,34 @@
 import kotlin.math.abs
 
 fun main() {
+    val startTime = System.currentTimeMillis()
+
     fun parseInput(input: List<String>): Pair<MutableList<Int>, MutableList<Int>> {
         val leftList = mutableListOf<Int>()
         val rightList = mutableListOf<Int>()
 
-        for (line in input) {
-            val lines: List<String> = line.split("\\s+".toRegex()).filter { it.isNotEmpty() }
-            leftList.add(lines[0].toInt())
-            rightList.add(lines[1].toInt())
+        input.forEach { line ->
+            val (left, right) = line.split("\\s+".toRegex()).map { it.toIntOrNull() }
+            if (left != null && right != null) {
+                leftList.add(left)
+                rightList.add(right)
+            }
         }
 
-        return Pair(leftList, rightList)
+        return leftList to rightList
     }
 
     fun part1(input: List<String>): Int {
         val (leftList, rightList) = parseInput(input)
-        var sum: Int = 0
+        var sum = 0
 
-        while (leftList.isNotEmpty()) {
-            val leftMinWithIndex = leftList.withIndex().minByOrNull { it.value }
-            val leftMin: Int = leftMinWithIndex?.value ?: 0
-            val leftMinIndex: Int = leftMinWithIndex?.index ?: -1
+        val leftListSorted = leftList.sorted().toMutableList()
+        val rightListSorted = rightList.sorted().toMutableList()
 
-            val rightMinWithIndex = rightList.withIndex().minByOrNull { it.value }
-            val rightMin: Int = rightMinWithIndex?.value ?: 0
-            val rightMinIndex: Int = rightMinWithIndex?.index ?: -1
-
+        while (leftListSorted.isNotEmpty() && rightListSorted.isNotEmpty()) {
+            val leftMin = leftListSorted.removeAt(0)
+            val rightMin = rightListSorted.removeAt(0)
             sum += abs(leftMin - rightMin)
-
-            leftList.removeAt(leftMinIndex)
-            rightList.removeAt(rightMinIndex)
         }
 
         return sum
@@ -38,29 +36,23 @@ fun main() {
 
     fun part2(input: List<String>): Int {
         val (leftList, rightList) = parseInput(input)
-        var sum: Int = 0
 
-        for (number in leftList) {
-            val multiplicative: Int = rightList.count { it == number }
+        val rightListFrequency = rightList.groupingBy { it }.eachCount()
 
-            sum += (number * multiplicative)
+        return leftList.sumOf { number ->
+            val multiplicative = rightListFrequency[number] ?: 0
+            number * multiplicative
         }
-
-        return sum
     }
 
-    // Or read a large test input from the `src/Day01_test.txt` file:
     val testInput = readInput("Day01_test")
-    println("Test output: part1")
-    part1(testInput).println()
-    println("Test output: part2")
-    part2(testInput).println()
-    println()
+    println("Test output (part1): ${part1(testInput)}")
+    println("Test output (part2): ${part2(testInput)}")
 
-    // Read the input from the `src/Day01.txt` file.
-    val input = readInput("Day01")
-    println("Real output: part1")
-    part1(input).println()
-    println("Real output: part1")
-    part2(input).println()
+    val realInput = readInput("Day01")
+    println("Real output (part1): ${part1(realInput)}")
+    println("Real output (part2): ${part2(realInput)}")
+
+    val endTime = System.currentTimeMillis()
+    println("Execution time: ${endTime - startTime} ms")
 }
