@@ -2,160 +2,78 @@ import kotlin.math.sign
 import kotlin.math.abs
 
 fun main() {
+    val startTime = System.currentTimeMillis()
+
+    fun checkReport(levels: List<Int>): Pair<String, Int> {
+        val initialSign = (levels[0] - levels[1]).sign
+
+        for (i in 0 until levels.size - 1) {
+            val (current, next) = levels[i] to levels[i + 1]
+            val diff = current - next
+            when {
+                abs(diff) !in 1..3 -> return Pair("Diff", i)
+                diff.sign != initialSign -> return Pair("Sign", i)
+            }
+        }
+        return Pair("Safe", -1)
+    }
+
     fun part1(input: List<String>): Int {
-        var safeReports: Int = 0
+        var safeReports = 0
 
         for (line in input) {
-            val levels = line.split(" ")
+            val levels = line.split(" ").map { it.toInt() }
 
-            val level0 = levels[0].toInt()
-            val level1 = levels[1].toInt()
-            val sign = (level0 - level1).sign
-            var reportUnsafe = false
+            val report = checkReport(levels)
 
-            for (i in 0 until levels.size - 1) {
-                val diff = levels[i].toInt() - levels[i + 1].toInt()
-
-                if (abs(diff) < 1 || abs(diff) > 3) {
-                    reportUnsafe = true
-                    break
-                }
-
-                if (diff.sign != sign) {
-                    reportUnsafe = true
-                    break
-                }
-            }
-
-            if (!reportUnsafe) {
-                safeReports += 1
-            }
+            if (report.first == "Safe") { safeReports++ }
         }
 
         return safeReports
     }
 
-    fun isUnsafe(sign: Int, left: Int, right: Int): Boolean {
-        val diff = left - right
-
-        return abs(diff) !in 1..3 || diff.sign != sign
+    fun removeLevel(levels: List<Int>, indexToRemove: Int): List<Int> {
+        return levels.take(indexToRemove) + levels.drop(indexToRemove + 1)
     }
 
-    fun isSafe(sign: Int, left: Int, right: Int): Boolean {
-        val diff = left - right
-
-        return abs(diff) in 1..3 && diff.sign == sign
-    }
-    
-    fun prevIsDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Boolean {
-        if (pos == 1) {
-            val newSign = (current - next).sign
-            val currentIsSafe = isSafe(newSign, current, next)
-            val nextIsSafe = if (nextPlus == -1) true else isSafe(newSign, next, nextPlus)
-
-            return currentIsSafe && nextIsSafe
+    fun canFixReport(report: Pair<String, Int>, levels: List<Int> ): Boolean {
+        if (report.first == "Sign" && (report.second == 0 || report.second == 1)) {
+            if (checkReport(removeLevel(levels, 0)).first == "Safe") return true
+            if (checkReport(removeLevel(levels, 1)).first == "Safe") return true
+        } else {
+            if (checkReport(removeLevel(levels, report.second + 1)).first == "Safe") return true
+            if (checkReport(removeLevel(levels, report.second)).first == "Safe") return true
         }
 
         return false
     }
 
-    fun currentIsDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Boolean {
-        return when {
-            pos < 1 -> {
-                val newSign = (next - nextPlus).sign
-                isSafe(newSign, next, nextPlus)
-            }
-            pos == 1 -> {
-                val newSign = (prev - next).sign
-                val prevIsSafe = isSafe(newSign, prev, next)
-                val nextIsSafe = nextPlus == -1 || isSafe(newSign, next, nextPlus)
-                prevIsSafe && nextIsSafe
-            }
-            else -> {
-                val prevIsSafe = isSafe(sign, prev, next)
-                val nextIsSafe = nextPlus == -1 || isSafe(sign, next, nextPlus)
-                prevIsSafe && nextIsSafe
-            }
-        }
-    }
-    
-    fun nextIsDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Boolean {
-        return when {
-            nextPlus < 0 -> true
-            pos == 0 -> {
-                val newSign = (current - nextPlus).sign
-                isSafe(newSign, current, nextPlus)
-            }
-            else -> isSafe(sign, current, nextPlus)
-        }
-    }
-    
-    fun findProblemDampener(sign: Int, pos: Int, prev: Int, current: Int, next: Int, nextPlus: Int): Int {
-        return when {
-            nextIsDampener(sign, pos, prev, current, next, nextPlus) -> pos + 1
-            prevIsDampener(sign, pos, prev, current, next, nextPlus) -> pos - 1
-            currentIsDampener(sign, pos, prev, current, next, nextPlus) -> pos
-            else -> -1
-        }
-    }
-
     fun part2(input: List<String>): Int {
-        var safeReports: Int = 0
+        var safeReports = 0
 
         for (line in input) {
-            var problemDampenerPosition = -1
-            val levels = line.split(" ")
+            val levels = line.split(" ").map { it.toInt() }
 
-            var sign = (levels[0].toInt() - levels[1].toInt()).sign
-            var reportUnsafe = false
+            val report = checkReport(levels)
 
-            for (i in 0 until levels.size - 1) {
-                if (i == problemDampenerPosition) {
-                    continue
-                }
-
-                if (isUnsafe(sign, levels[i].toInt(), levels[i + 1].toInt())) {
-                    if (problemDampenerPosition == -1) {
-                        val prev = if (i == 0) - 1 else levels[i - 1].toInt()
-                        val current = levels[i].toInt()
-                        val next = levels[i + 1].toInt()
-                        val nextPlus = if (i > levels.size - 3) - 1 else levels[i + 2].toInt()
-
-                        problemDampenerPosition = findProblemDampener(sign, i, prev, current, next, nextPlus)
-
-                        if (problemDampenerPosition != -1) {
-                            if (problemDampenerPosition in (0..1)) {
-                                sign = (levels[1 - problemDampenerPosition].toInt() - levels[2].toInt()).sign
-                            }
-                            continue
-                        }
-                    }
-
-                    reportUnsafe = true
-                    break
-                }
-            }
-
-            if (!reportUnsafe) {
-                safeReports += 1
+            if (report.first != "Safe") {
+                if (canFixReport(report, levels)) { safeReports++ }
+            } else {
+                safeReports++
             }
         }
 
         return safeReports
     }
 
-    // Run with test input
     val testInput = readInput("Day02_test")
-    println("Test output: part1")
-    part1(testInput).println()
-    println("Test output: part2")
-    part2(testInput).println()
-    println()
+    println("Test output (part1): ${part1(testInput)}")
+    println("Test output (part2): ${part2(testInput)}")
 
-    // Run with real input
-    val input = readInput("Day02")
-    println("Real output: part1")
-    part1(input).println()
-    println("Real output: part2")
-    part2(input).println()
+    val realInput = readInput("Day02")
+    println("Real output (part1): ${part1(realInput)}")
+    println("Real output (part2): ${part2(realInput)}")
+
+    val endTime = System.currentTimeMillis()
+    println("Execution time: ${endTime - startTime} ms")
 }
