@@ -155,17 +155,18 @@ fun main() {
                     if (isInLoop) { validObstructions++}
                 }
             }
+
         }
 
         return validObstructions
     }
 
-    val testInput = readInput("Day06_test")
-    println("Test output (part1): ${part1(testInput)}")
-    println("Test output (part2): ${part2(testInput)}")
+//    val testInput = readInput("Day06_test")
+//    println("Test output (part1): ${part1(testInput)}")
+//    println("Test output (part2): ${part2(testInput)}")
 
     val realInput = readInput("Day06")
-    println("Real output (part1): ${part1(realInput)}")
+//    println("Real output (part1): ${part1(realInput)}")
     println("Real output (part2): ${part2(realInput)}")
 
     val endTime = System.currentTimeMillis()
