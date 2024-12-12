@@ -20,9 +20,4 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  */
 fun Any?.println() = println(this)
 
-/**
- * The more performant way to get the size of a number
- */
-fun getDigitCount(number: Long): Int {
-    return if (number < 10) 1 else 1 + getDigitCount(number / 10)
-}
+

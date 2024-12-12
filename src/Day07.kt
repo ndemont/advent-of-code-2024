@@ -1,14 +1,11 @@
+import kotlin.math.log10
 import kotlin.math.pow
 
 fun main() {
     val startTime = System.currentTimeMillis()
 
-    fun getDigitCount(number: Int): Int {
-        return if (number < 10) 1 else 1 + getDigitCount(number / 10)
-    }
-
     fun getPowerOfTen(number: Int): Int {
-        return 10.0.pow(getDigitCount(number)).toInt()
+        return 10.0.pow(log10(number.toDouble()).toInt() + 1).toInt()
     }
 
     fun calibrate1(target: Long, index: Int, current: Long, numbers: List<Int>): Boolean {

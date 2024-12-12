@@ -1,18 +1,14 @@
-import kotlin.math.pow
+import kotlin.math.*
 
 fun main() {
     val startTime = System.currentTimeMillis()
-
-    fun getDigitCount(number: Long): Int {
-        return if (number < 10) 1 else 1 + getDigitCount(number / 10)
-    }
 
     fun applyRule(stone: Long): Pair<Long, Long>{
         if (stone == 0.toLong()) {
             return 1.toLong() to (-1).toLong()
         }
 
-        val stoneSize = getDigitCount(stone)
+        val stoneSize = log10(stone.toDouble()).toInt() + 1
         if (stoneSize % 2 == 0) {
             val powerOfTen = 10.0.pow(stoneSize / 2).toLong()
             val rightStone = stone % powerOfTen
