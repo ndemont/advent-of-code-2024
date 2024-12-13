@@ -14,8 +14,8 @@ fun main() {
             val nextY = plant.second + direction.second
 
             if (nextY in farm.indices && nextX in farm.first().indices) {
-                if (farm[nextY][nextX] == region.plant) exploreRegion(farm, Pair(nextX, nextY), region)
-                else if (farm[nextY][nextX] != region.plant.lowercaseChar()) region.perimeter++
+                if (farm[nextY][nextX] == region.plantType) exploreRegion(farm, Pair(nextX, nextY), region)
+                else if (farm[nextY][nextX] != region.plantType.lowercaseChar()) region.perimeter++
 //                else if (farm[nextY][nextX].isUpperCase()) region.perimeter++
             } else {
                 region.perimeter++
@@ -24,7 +24,7 @@ fun main() {
     }
 
     fun registerRegion(x: Int, y: Int, regionPlant: Char, farm: List<MutableList<Char>>) {
-        val newRegion = Region(plant = regionPlant, area = 0, perimeter = 0)
+        val newRegion = Region(plantType = regionPlant, area = 0, perimeter = 0)
 
         exploreRegion(farm, Pair(x, y), newRegion)
 
@@ -45,7 +45,6 @@ fun main() {
     }
 
     fun exploreRegion2(farm: List<MutableList<Char>>, plant: Pair<Int, Int>, region: Region ): Unit {
-        val plantType = farm[plant.second][plant.first]
         farm[plant.second][plant.first] = farm[plant.second][plant.first].lowercaseChar()
         region.area += 1
 
