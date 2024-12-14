@@ -37,9 +37,7 @@ fun main() {
 
         games.forEach { game ->
             val (pushA, pushB) = findCheapestWin(game)
-            if (pushA >= 0) {
-                costToWin += (pushA * 3) + pushB
-            }
+            if (pushA >= 0) { costToWin += (pushA * 3) + pushB }
         }
         return costToWin.toLong()
     }
@@ -53,9 +51,7 @@ fun main() {
             val currentGame = Game(game.buttonA, game.buttonB, newPrize)
 
             val (pushA, pushB) = findCheapestWin(currentGame)
-            if (pushA >= 0) {
-                costToWin += (pushA * 3) + pushB
-            }
+            if (pushA >= 0) { costToWin += (pushA * 3) + pushB }
         }
         return costToWin.toLong()
     }
