@@ -1,23 +1,17 @@
 fun main() {
     val startTime = System.currentTimeMillis()
-    val guardDirections = mapOf(
-        '^' to Pair(0, -1),
-        'v' to Pair(0, 1),
-        '>' to Pair(1, 0),
-        '<' to Pair(-1, 0)
-    )
 
-    fun getDirection(char: Char): Pair<Int, Int> { return guardDirections[char] ?: Pair(0, 0) }
+    fun getDirection(char: Char): Pair<Int, Int> { return directions[char] ?: Pair(0, 0) }
 
     fun getCharFromDirection(direction: Pair<Int, Int>): Char {
-        return guardDirections.entries.firstOrNull { it.value == direction }?.key ?: ' '
+        return directions.entries.firstOrNull { it.value == direction }?.key ?: ' '
     }
 
     fun getGuardPosition(map: List<String>): Pair<Int, Int> {
         var guardPosition: Pair<Int, Int> = -1 to -1
 
         map.forEachIndexed { y, line ->
-            val x = line.indexOfFirst { char -> char in guardDirections.keys }
+            val x = line.indexOfFirst { char -> char in directions.keys }
 
             if (x != -1) {
                 guardPosition = x to y
@@ -48,7 +42,7 @@ fun main() {
     fun markAsVisited2(list: MutableList<String>, stringIndex: Int, charIndex: Int, direction: Pair<Int, Int>, isTurn: Boolean): Boolean {
         val currentChar = list[stringIndex][charIndex]
         if (getDirection(currentChar) == direction) { return true }
-        if ((currentChar in guardDirections) && isTurn) { return false}
+        if ((currentChar in directions) && isTurn) { return false}
 
         val currentString = list[stringIndex]
         val modifiedString = StringBuilder(currentString)
@@ -109,7 +103,7 @@ fun main() {
 
         input.forEachIndexed { y, line ->
             line.forEachIndexed { x, char ->
-                if (char !in guardDirections && char != '#') {
+                if (char !in directions && char != '#') {
                     val map = input.toMutableList()
 
                     addObstacle(map,y,x)

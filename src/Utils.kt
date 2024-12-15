@@ -20,4 +20,14 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  */
 fun Any?.println() = println(this)
 
+/**
+ * Directions mapping from char to vector.
+ */
+val directions = mapOf(
+    '^' to Pair(0, -1),
+    'v' to Pair(0, 1),
+    '>' to Pair(1, 0),
+    '<' to Pair(-1, 0)
+)
+
 
