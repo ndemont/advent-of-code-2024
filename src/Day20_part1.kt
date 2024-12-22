@@ -75,17 +75,14 @@ fun main() {
     }
 
     val testInput = readInput("Day16_test")
-//    println("Test output (part1): ${part1(testInput)} - expected 7036")
-//    println("Test output (part2): ${part2(testInput)}")
+    println("Test output (part1): ${part1(testInput)} == 7036")
 
     val testInput2 = readInput("Day16_test2")
-//    println("Test output (part1): ${part1(testInput2)} - expected 11048")
-//    println("Test output (part2): ${part2(testInput)}")
+//    println("Test output (part1): ${part1(testInput2)} == 11048")
 
 
     val realInput = readInput("Day16")
-    println("Real output (part1): ${part1(realInput)} - expected < 389172")
-//    println("Real output (part2): ${part2(realInput)}")
+//    println("Real output (part1): ${part1(realInput)} == 98520")
 
     val endTime = System.currentTimeMillis()
     println("Execution time: ${endTime - startTime} ms")
